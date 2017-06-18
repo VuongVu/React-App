@@ -1,44 +1,39 @@
-html, body, input, button {
-  font-family: Sawasdee;
-  font-size: 20px;
+body {
+  color: #222;
+  background: #f4f4f4;
+  font: 400 14px CoreSans, Arial,sans-serif;
 }
 
-.todo__list {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
+a {
+  color: #222;
 }
 
-.todo__item {
-  padding: .5em .25em;
-  border-bottom: solid 1px #eee;
+a:hover {
+  text-decoration: underline;
 }
 
-.todo__item:hover {
-  background: #f7f7f7;
+input {
+  padding: 10px;
+  border-radius: 5px;
+  outline: none;
+  margin-right: 10px;
+  border: 1px solid #dddddd;
+}
+
+button {
+  padding: 10px;
+  margin: 10px;
+  border-radius: 5px;
+  border: 1px solid #dddddd;
+  background: transparent;
+  color: #808080;
   cursor: pointer;
 }
 
-.todo__entry {
-  border: solid 1px #ccc;
-  padding: .25em .5em;
-  border-radius: .2em;
-  background: #f3f3f3;
-  width: 100%;
-  box-sizing: border-box;
+button:hover {
+  color: #222;
 }
 
-.todo__button {
-  border: 0;
-  border-radius: .2em;
-  background: #71B7FF;  
-  color: #fff;
-  padding: .25em .5em;
-  margin: .5em 0;
-  margin-right: .25em;
-  cursor: pointer;
-}
-
-.todo__button:hover {
-  background: #B2D8FF;
+*:focus {
+  outline: none;
 }
