@@ -8,6 +8,9 @@
     "test": "react-scripts test --env=jsdom"
   },
   "dependencies": {
+    "classnames": "^2.2.5",
+    "font-awesome": "^4.7.0",
+    "lodash": "^4.17.4",
     "prop-types": "^15.5.10",
     "react": "^15.5.4",
     "react-dom": "^15.5.4"
