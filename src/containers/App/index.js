@@ -18,6 +18,42 @@ import './index.css';
 
 const withLoading = (Component) => ({ isLoading, ...rest }) => isLoading ? <Loading /> : <Component { ...rest } />
 
+const updateSearchTopstoriesState = (hits, page) => (prevState) => {
+  const { searchKey, results } = prevState;
+
+  const oldHits = results && results[searchKey]
+    ? results[searchKey].hits
+    : [];
+
+  const updatedHits = [
+    ...oldHits,
+    ...hits
+  ];
+
+  return {
+    results: {
+      ...results,
+      [searchKey]: { hits: updatedHits, page }
+    },
+    isLoading: false
+  };
+};
+
+const updateDismissState = (id) => (prevState) => {
+  const { searchKey, results } = prevState;
+  const { hits, page } = results[searchKey];
+
+  const isNotId = item => item.objectID !== id;
+  const updatedHits = hits.filter(isNotId);
+
+  return {
+    results: {
+      ...results,
+      [searchKey]: { hits: updatedHits, page }
+    }
+  };
+};
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -26,9 +62,7 @@ class App extends Component {
       results: null,
       searchKey: '',
       searchTerm: DEFAULT_QUERY,
-      isLoading: false,
-      sortKey: 'NONE',
-      isSortReverse: false
+      isLoading: false
     };
 
     this.needsToSearchTopstories = this.needsToSearchTopstories.bind(this);
@@ -37,7 +71,6 @@ class App extends Component {
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onSearchSubmit = this.onSearchSubmit.bind(this);
     this.onDismiss = this.onDismiss.bind(this);
-    this.onSort = this.onSort.bind(this);
   }
 
   componentDidMount() {
@@ -47,32 +80,10 @@ class App extends Component {
     this.fetchSearchTopstories(searchTerm, DEFAULT_PAGE);  
   }
 
-  onSort(sortKey) {
-    const isSortReverse = this.state.sortKey === sortKey && !this.state.isSortReverse;
-
-    this.setState({ sortKey, isSortReverse });
-  }
-
   setSearchTopstories(result) {
     const { hits, page } = result;
-    const { searchKey, results } = this.state;
 
-    const oldHits = results && results[searchKey]
-      ? results[searchKey].hits
-      : [];
-
-    const updatedHits = [
-      ...oldHits, 
-      ...hits
-    ];
-
-    this.setState({ 
-      results: { 
-        ...results,
-        [searchKey]: { hits: updatedHits, page }
-      },
-      isLoading: false
-    });
+    this.setState(updateSearchTopstoriesState(hits, page));
   }
 
   needsToSearchTopstories(searchTerm) {
@@ -109,22 +120,11 @@ class App extends Component {
   }
 
   onDismiss(id) {
-    const { searchKey, results } = this.state;
-    const { hits, page } = results[searchKey];
-
-    const isNotId = item => item.objectID !== id;
-    const updatedHits = hits.filter(isNotId);
-
-    this.setState({
-      results: {
-        ...results,
-        [searchKey]: { hits: updatedHits, page }
-      }
-    });
+    this.setState(updateDismissState(id));
   }
 
   render() {
-    const { searchTerm, results, searchKey, isLoading, sortKey, isSortReverse } = this.state;
+    const { searchTerm, results, searchKey, isLoading } = this.state;
     const page = (results && results[searchKey] && results[searchKey].page) || 0;
     const list = (results && results[searchKey] && results[searchKey].hits) || [];
     const ButtonWithLoading = withLoading(Button);    
@@ -142,9 +142,6 @@ class App extends Component {
           </div>
           <Table
             list={list}
-            sortKey={sortKey}
-            onSort={this.onSort}
-            isSortReverse={isSortReverse}
             onDismiss={this.onDismiss}
           />
           <div className="interactions">
